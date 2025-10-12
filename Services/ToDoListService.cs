@@ -1,6 +1,5 @@
 using ToDoList.Interfaces;
-using ToDoList.Models;
-using ToDoListModel = ToDoList.Models.ToDoList;
+using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 using ToDoList.Database;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,4 @@
-using ToDoList.Models;
-using ToDoList.Database;
-using ToDoListModel = ToDoList.Models.ToDoList;
+using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 
 namespace ToDoList.Interfaces;
 

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Interfaces;
-using ToDoList.Models;
+using ToDoList.Models.Domain;
+using ToDoList.Models.DTOs;
+using UserModel = ToDoList.Models.Domain.User;
 
 namespace ToDoList.Controllers;
 
@@ -21,25 +23,64 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUsers([FromQuery] string? filter = null)
     {
         var users = await _userService.GetUsersAsync(filter);
-        return Ok(users);
+
+        var dto = users.Select(u => new UserDto
+        {
+            id = u.id,
+            username = u.username,
+            email = u.email
+        });
+
+        return Ok(dto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] User newUser)
+    public async Task<IActionResult> CreateUser([FromBody] CreateOrUpdateUserDto newUserDto)
     {
-        var createdUser = await _userService.CreateUserAsync(newUser);
-        return CreatedAtAction(nameof(GetUsers), new { id = createdUser.id }, createdUser);
+        var domain = new UserModel
+        {
+            username = newUserDto.username,
+            email = newUserDto.email,
+            password = newUserDto.password
+        };
+
+        var createdUser = await _userService.CreateUserAsync(domain);
+
+        var createdDto = new UserDto
+        {
+            id = createdUser.id,
+            username = createdUser.username,
+            email = createdUser.email
+        };
+
+        return CreatedAtAction(nameof(GetUsers), new { id = createdDto.id }, createdDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] User updatedUser)
+    public async Task<IActionResult> UpdateUser(int id, [FromBody] CreateOrUpdateUserDto updatedUserDto)
     {
-        var result = await _userService.UpdateUserAsync(id, updatedUser);
+        var domain = new UserModel
+        {
+            id = id,
+            username = updatedUserDto.username,
+            email = updatedUserDto.email,
+            password = updatedUserDto.password
+        };
+
+        var result = await _userService.UpdateUserAsync(id, domain);
         if (result == null)
         {
             return BadRequest("Invalid user data.");
         }
-        return Ok(result);
+
+        var resultDto = new UserDto
+        {
+            id = result.id,
+            username = result.username,
+            email = result.email
+        };
+
+        return Ok(resultDto);
     }
 
     [HttpDelete("{id}")]

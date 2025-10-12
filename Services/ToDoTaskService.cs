@@ -1,7 +1,7 @@
 using ToDoList.Interfaces;
-using ToDoList.Models;
 using ToDoList.Database;
 using Microsoft.EntityFrameworkCore;
+using ToDoList.Models.Domain;
 
 namespace ToDoList.Services;
 

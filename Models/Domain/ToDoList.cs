@@ -1,5 +1,5 @@
 
-namespace ToDoList.Models;
+namespace ToDoList.Models.Domain;
 
 public class ToDoList
 {

@@ -1,5 +1,4 @@
-using ToDoList.Models;
-using ToDoList.Database;
+using ToDoList.Models.Domain;
 
 namespace ToDoList.Interfaces;
 public interface IUserService

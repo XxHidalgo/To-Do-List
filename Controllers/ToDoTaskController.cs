@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Interfaces;
-using ToDoList.Models;
+using ToDoList.Models.Domain;
+using ToDoList.Models.DTOs;
+using ToDoTaskModel = ToDoList.Models.Domain.ToDoTask;
 
 namespace ToDoList.Controllers;
 
@@ -21,25 +23,77 @@ public class ToDoTaskController : ControllerBase
     public async Task<IActionResult> GetTasks([FromQuery] string? filter = null)
     {
         var tasks = await _toDoTaskService.GetTasksAsync(filter);
-        return Ok(tasks);
+
+        var dto = tasks.Select(t => new ToDoTaskDto
+        {
+            id = t.id,
+            toDoList_id = t.toDoList_id,
+            title = t.title,
+            description = t.description,
+            dueDate = t.dueDate,
+            isCompleted = t.isCompleted
+        });
+
+        return Ok(dto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateTask([FromBody] ToDoTask newTask)
+    public async Task<IActionResult> CreateTask([FromBody] CreateOrUpdateToDoTaskDto newTaskDto)
     {
-        var createdTask = await _toDoTaskService.CreateTaskAsync(newTask);
-        return CreatedAtAction(nameof(GetTasks), new { id = createdTask.id }, createdTask);
+        var domain = new ToDoTaskModel
+        {
+            toDoList_id = newTaskDto.toDoList_id,
+            title = newTaskDto.title,
+            description = newTaskDto.description,
+            dueDate = newTaskDto.dueDate,
+            isCompleted = newTaskDto.isCompleted
+        };
+
+        var createdTask = await _toDoTaskService.CreateTaskAsync(domain);
+
+        var createdDto = new ToDoTaskDto
+        {
+            id = createdTask.id,
+            toDoList_id = createdTask.toDoList_id,
+            title = createdTask.title,
+            description = createdTask.description,
+            dueDate = createdTask.dueDate,
+            isCompleted = createdTask.isCompleted
+        };
+
+        return CreatedAtAction(nameof(GetTasks), new { id = createdDto.id }, createdDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTask(int id, [FromBody] ToDoTask updatedTask)
+    public async Task<IActionResult> UpdateTask(int id, [FromBody] CreateOrUpdateToDoTaskDto updatedTaskDto)
     {
-        var result = await _toDoTaskService.UpdateTaskAsync(id, updatedTask);
+        var domain = new ToDoTaskModel
+        {
+            id = id,
+            toDoList_id = updatedTaskDto.toDoList_id,
+            title = updatedTaskDto.title,
+            description = updatedTaskDto.description,
+            dueDate = updatedTaskDto.dueDate,
+            isCompleted = updatedTaskDto.isCompleted
+        };
+
+        var result = await _toDoTaskService.UpdateTaskAsync(id, domain);
         if (result == null)
         {
             return BadRequest("Invalid task data.");
         }
-        return Ok(result);
+
+        var resultDto = new ToDoTaskDto
+        {
+            id = result.id,
+            toDoList_id = result.toDoList_id,
+            title = result.title,
+            description = result.description,
+            dueDate = result.dueDate,
+            isCompleted = result.isCompleted
+        };
+
+        return Ok(resultDto);
     }
 
     [HttpDelete("{id}")]

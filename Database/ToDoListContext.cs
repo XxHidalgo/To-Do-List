@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using ToDoList.Models;
-using ToDoListModel = ToDoList.Models.ToDoList;
+using ToDoList.Models.Domain;
+using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 
 namespace ToDoList.Database
 {

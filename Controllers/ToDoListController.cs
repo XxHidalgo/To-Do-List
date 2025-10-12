@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Services;
 using ToDoList.Interfaces;
-using ToDoListModel = ToDoList.Models.ToDoList;
+using ToDoList.Models.DTOs;
+using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 
 namespace ToDoList.Controllers;
 
@@ -20,36 +21,80 @@ public class ToDoListController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] string? filter = null)
     {
-        var toDoLists = await _toDoListService.GetListsAsync(filter);
-        return Ok(toDoLists);
+        var domainLists = await _toDoListService.GetListsAsync(filter);
+
+        var dtoLists = domainLists.Select(d => new ToDoListDto
+        {
+            id = d.id,
+            user_id = d.user_id,
+            title = d.title,
+            description = d.description,
+            isCompleted = d.isCompleted
+        });
+
+        return Ok(dtoLists);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateList([FromBody] ToDoListModel newList)
+    public async Task<IActionResult> CreateList([FromBody] CreateOrUpdateToDoListDto newListDto)
     {
-        var createdList = await _toDoListService.CreateListAsync(newList);
-        return CreatedAtAction(nameof(GetList), new { id = createdList.id }, createdList);
+        var domain = new ToDoListModel
+        {
+            user_id = newListDto.user_id,
+            title = newListDto.title,
+            description = newListDto.description,
+            isCompleted = newListDto.isCompleted
+        };
+
+        var created = await _toDoListService.CreateListAsync(domain);
+
+        var createdDto = new ToDoListDto
+        {
+            id = created.id,
+            user_id = created.user_id,
+            title = created.title,
+            description = created.description,
+            isCompleted = created.isCompleted
+        };
+
+        return CreatedAtAction(nameof(GetList), new { id = createdDto.id }, createdDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateList(int id, [FromBody] ToDoListModel updatedList)
+    public async Task<IActionResult> UpdateList(int id, [FromBody] CreateOrUpdateToDoListDto updatedDto)
     {
-        var result = await _toDoListService.UpdateListAsync(id, updatedList);
-        if (result == null)
+        var domain = new ToDoListModel
         {
-            return BadRequest("Invalid list data.");
-        }
-        return Ok(result);
+            id = id,
+            user_id = updatedDto.user_id,
+            title = updatedDto.title,
+            description = updatedDto.description,
+            isCompleted = updatedDto.isCompleted
+        };
+        
+        var result = await _toDoListService.UpdateListAsync(id, domain);
+
+        if (result == null) return BadRequest("Invalid list data.");
+
+        var resultDto = new ToDoListDto 
+        {
+            id = result.id,
+            user_id = result.user_id,
+            title = result.title,
+            description = result.description,
+            isCompleted = result.isCompleted
+        };
+
+        return Ok(resultDto);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteList(int id)
     {
         var success = await _toDoListService.DeleteListAsync(id);
-        if (!success)
-        {
-            return BadRequest("Invalid list ID.");
-        }
+
+        if (!success) return BadRequest("Invalid list ID.");
+
         return NoContent();
     }
 }

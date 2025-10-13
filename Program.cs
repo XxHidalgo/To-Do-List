@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ToDoList.Database;
 using ToDoList.Interfaces;
 using ToDoList.Services;
+using ToDoList.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddSqlServer<ToDoListContext>(builder.Configuration.GetConnecti
 builder.Services.AddScoped<IToDoListService, ToDoListService>();
 builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));    
 
 var app = builder.Build();
 

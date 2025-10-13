@@ -166,3 +166,4 @@ C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\tr\Mi
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ToDoList.sourcelink.json
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\AutoMapper.dll

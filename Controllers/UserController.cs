@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ToDoList.Interfaces;
 using ToDoList.Models.Domain;
 using ToDoList.Models.DTOs;
-using UserModel = ToDoList.Models.Domain.User;
+using AutoMapper;
 
 namespace ToDoList.Controllers;
 
@@ -12,11 +12,13 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
+    private readonly IMapper _mapper;
 
-    public UserController(ILogger<UserController> logger, IUserService userService)
+    public UserController(ILogger<UserController> logger, IUserService userService, IMapper mapper)
     {
         _logger = logger;
         _userService = userService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -24,12 +26,7 @@ public class UserController : ControllerBase
     {
         var users = await _userService.GetUsersAsync(filter);
 
-        var dto = users.Select(u => new UserDto
-        {
-            id = u.id,
-            username = u.username,
-            email = u.email
-        });
+        var dto = _mapper.Map<IEnumerable<UserDto>>(users);
 
         return Ok(dto);
     }
@@ -37,21 +34,11 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] CreateOrUpdateUserDto newUserDto)
     {
-        var domain = new UserModel
-        {
-            username = newUserDto.username,
-            email = newUserDto.email,
-            password = newUserDto.password
-        };
+        var domain = _mapper.Map<User>(newUserDto);
 
         var createdUser = await _userService.CreateUserAsync(domain);
 
-        var createdDto = new UserDto
-        {
-            id = createdUser.id,
-            username = createdUser.username,
-            email = createdUser.email
-        };
+        var createdDto = _mapper.Map<UserDto>(createdUser);
 
         return CreatedAtAction(nameof(GetUsers), new { id = createdDto.id }, createdDto);
     }
@@ -59,27 +46,14 @@ public class UserController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] CreateOrUpdateUserDto updatedUserDto)
     {
-        var domain = new UserModel
-        {
-            id = id,
-            username = updatedUserDto.username,
-            email = updatedUserDto.email,
-            password = updatedUserDto.password
-        };
+        var domain = _mapper.Map<User>(updatedUserDto);
 
         var result = await _userService.UpdateUserAsync(id, domain);
-        if (result == null)
-        {
-            return BadRequest("Invalid user data.");
-        }
 
-        var resultDto = new UserDto
-        {
-            id = result.id,
-            username = result.username,
-            email = result.email
-        };
+        if (result == null) return BadRequest("Invalid user data.");
 
+        var resultDto = _mapper.Map<UserDto>(result);
+        
         return Ok(resultDto);
     }
 
@@ -87,10 +61,9 @@ public class UserController : ControllerBase
     public async Task<IActionResult> DeleteUser(int id)
     {
         var success = await _userService.DeleteUserAsync(id);
-        if (!success)
-        {
-            return BadRequest("Invalid user ID.");
-        }
+
+        if (!success) return BadRequest("Invalid user ID.");
+
         return NoContent();
     }
     

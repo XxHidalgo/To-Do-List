@@ -3,6 +3,7 @@ using ToDoList.Interfaces;
 using ToDoList.Models.Domain;
 using ToDoList.Models.DTOs;
 using AutoMapper;
+using ToDoList.CustomActionFilters;
 
 namespace ToDoList.Controllers;
 
@@ -22,16 +23,34 @@ public class ToDoTaskController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTasks([FromQuery] string? filter = null)
+    public async Task<IActionResult> GetTasks(
+        [FromQuery] string? filterOn = null,
+        [FromQuery] string? filterQuery = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = false
+    )
     {
-        var tasks = await _toDoTaskService.GetTasksAsync(filter);
+        var tasks = await _toDoTaskService.GetTasksAsync(filterOn, filterQuery, sortBy, sortDescending);
 
         var dto = _mapper.Map<IEnumerable<ToDoTaskDto>>(tasks);
 
         return Ok(dto);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetTask(int id)
+    {
+        var task = await _toDoTaskService.GetTaskByIdAsync(id);
+
+        if (task == null) return NotFound();
+
+        var dto = _mapper.Map<ToDoTaskDto>(task);
+
+        return Ok(dto);
+    }
+
     [HttpPost]
+    [ValidateModel]
     public async Task<IActionResult> CreateTask([FromBody] CreateOrUpdateToDoTaskDto newTaskDto)
     {
         var domain = _mapper.Map<ToDoTask>(newTaskDto);
@@ -44,13 +63,14 @@ public class ToDoTaskController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [ValidateModel]
     public async Task<IActionResult> UpdateTask(int id, [FromBody] CreateOrUpdateToDoTaskDto updatedTaskDto)
-    {
+    {        
         var domain = _mapper.Map<ToDoTask>(updatedTaskDto);
 
         var result = await _toDoTaskService.UpdateTaskAsync(id, domain);
 
-        if (result == null) return BadRequest("Invalid task data.");
+        if (result == null) return NotFound("Invalid task data.");
 
         var resultDto = _mapper.Map<ToDoTaskDto>(result);
         return Ok(resultDto);
@@ -61,7 +81,7 @@ public class ToDoTaskController : ControllerBase
     {
         var success = await _toDoTaskService.DeleteTaskAsync(id);
         
-        if (!success) return BadRequest("Invalid task ID.");
+        if (!success) return NotFound("Invalid task ID.");
 
         return NoContent();
     }

@@ -4,6 +4,7 @@ using ToDoList.Interfaces;
 using ToDoList.Models.DTOs;
 using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 using AutoMapper;
+using ToDoList.CustomActionFilters;
 
 namespace ToDoList.Controllers;
 
@@ -23,16 +24,34 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] string? filter = null)
+    public async Task<IActionResult> GetList(
+        [FromQuery] string? filterOn = null,
+        [FromQuery] string? filterQuery = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = false
+    )
     {
-        var domainLists = await _toDoListService.GetListsAsync(filter);
+        var domainLists = await _toDoListService.GetListsAsync(filterOn, filterQuery, sortBy, sortDescending);
 
         var dtoLists = _mapper.Map<IEnumerable<ToDoListDto>>(domainLists);
 
         return Ok(dtoLists);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetList(int id)
+    {
+        var domain = await _toDoListService.GetListByIdAsync(id);
+
+        if (domain == null) return NotFound();
+
+        var dto = _mapper.Map<ToDoListDto>(domain);
+
+        return Ok(dto);
+    }
+
     [HttpPost]
+    [ValidateModel]
     public async Task<IActionResult> CreateList([FromBody] CreateOrUpdateToDoListDto newListDto)
     {
         var domain = _mapper.Map<ToDoListModel>(newListDto);
@@ -45,13 +64,14 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [ValidateModel]
     public async Task<IActionResult> UpdateList(int id, [FromBody] CreateOrUpdateToDoListDto updatedDto)
     {
         var domain = _mapper.Map<ToDoListModel>(updatedDto);
 
         var result = await _toDoListService.UpdateListAsync(id, domain);
 
-        if (result == null) return BadRequest("Invalid list data.");
+        if (result == null) return NotFound("Invalid list data.");
 
         var resultDto = _mapper.Map<ToDoListDto>(result);
 
@@ -63,7 +83,7 @@ public class ToDoListController : ControllerBase
     {
         var success = await _toDoListService.DeleteListAsync(id);
 
-        if (!success) return BadRequest("Invalid list ID.");
+        if (!success) return NotFound("Invalid list ID.");
 
         return NoContent();
     }

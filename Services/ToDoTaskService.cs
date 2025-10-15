@@ -2,6 +2,7 @@ using ToDoList.Interfaces;
 using ToDoList.Database;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Models.Domain;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace ToDoList.Services;
 
@@ -14,21 +15,48 @@ public class ToDoTaskService : IToDoTaskService
         _context = context;
     }
 
-    public async Task<IEnumerable<ToDoTask>> GetTasksAsync(string? filter = null)
+    public async Task<IEnumerable<ToDoTask>> GetTasksAsync(
+        string? filterOn = null,
+        string? filterQuery = null,
+        string? sortBy = null,
+        bool sortDescending = false
+    )
     {
-        if (string.IsNullOrEmpty(filter))
+        var query = _context.ToDoTasks
+                    .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
         {
-            return await _context.ToDoTasks.ToListAsync();
+            if (filterOn.Equals("title", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(l => l.title != null && EF.Functions.Like(l.title, $"%{filterQuery}%"));
+            }
         }
 
-        var normalized = filter.ToLower();
+        if (!string.IsNullOrWhiteSpace(sortBy))
+        {
+            if (sortBy.Equals("title", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending ? query.OrderByDescending(l => l.title) : query.OrderBy(l => l.title);
+            }
+            else if (sortBy.Equals("id", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending ? query.OrderByDescending(l => l.id) : query.OrderBy(l => l.id);
+            }
+            else if (sortBy.Equals("dueDate", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending ? query.OrderByDescending(l => l.dueDate) : query.OrderBy(l => l.dueDate);
+            }
+        }
 
+        return await query.ToListAsync();
+    }
+    
+    public async Task<ToDoTask?> GetTaskByIdAsync(int id)
+    {
         return await _context.ToDoTasks
-                .Where(l =>
-                    l.title != null
-                    && l.title.ToLower().Contains(normalized)
-                )
-                .ToListAsync();
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.id == id);
     }
 
     public async Task<ToDoTask> CreateTaskAsync(ToDoTask newTask)
@@ -42,10 +70,7 @@ public class ToDoTaskService : IToDoTaskService
     {
         var existingTask = await _context.ToDoTasks.FindAsync(id);
 
-        if (existingTask == null)
-        {
-            return null;
-        }
+        if (existingTask == null) return null;
 
         existingTask.title          = updatedTask.title;
         existingTask.description    = updatedTask.description;
@@ -60,10 +85,8 @@ public class ToDoTaskService : IToDoTaskService
     public async Task<bool> DeleteTaskAsync(int id)
     {
         var list = await _context.ToDoTasks.FindAsync(id);
-        if (list == null)
-        {
-            return false;
-        }
+
+        if (list == null) return false;
 
         _context.ToDoTasks.Remove(list);
         await _context.SaveChangesAsync();

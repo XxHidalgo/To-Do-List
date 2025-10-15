@@ -14,16 +14,48 @@ public class ToDoListService : IToDoListService
         _context = context;
     }
 
-    public async Task<IEnumerable<ToDoListModel>> GetListsAsync(string? filter = null)
+    public async Task<IEnumerable<ToDoListModel>> GetListsAsync(
+        string? filterOn = null,
+        string? filterQuery = null,
+        string? sortBy = null,
+        bool sortDescending = false
+    )
     {
-        if (string.IsNullOrEmpty(filter))
+        var query = _context.ToDoLists
+            .Include(l => l.user)
+            .Include(l => l.tasks)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
         {
-            return await _context.ToDoLists.ToListAsync();
+            if (filterOn.Equals("title", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(l => l.title != null && EF.Functions.Like(l.title, $"%{filterQuery}%"));
+            }
         }
+
+        if (!string.IsNullOrWhiteSpace(sortBy))
+        {
+            if (sortBy.Equals("title", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending ? query.OrderByDescending(l => l.title) : query.OrderBy(l => l.title);
+            }
+            else if (sortBy.Equals("id", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending ? query.OrderByDescending(l => l.id) : query.OrderBy(l => l.id);
+            }
+        }
+
+        return await query.OrderBy(l => l.title).ToListAsync();
+    }
+
+    public async Task<ToDoListModel?> GetListByIdAsync(int id)
+    {
         return await _context.ToDoLists
-            .Where(l =>
-                l.title != null && l.title.Contains(filter, StringComparison.OrdinalIgnoreCase))
-            .ToListAsync();
+            .Include(l => l.user)
+            .Include(l => l.tasks)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(l => l.id == id);
     }
 
     public async Task<ToDoListModel> CreateListAsync(ToDoListModel newList)
@@ -37,10 +69,7 @@ public class ToDoListService : IToDoListService
     {
         var existingList = await _context.ToDoLists.FindAsync(id);
 
-        if (existingList == null)
-        {
-            return null;
-        }
+        if (existingList == null) return null;
 
         existingList.title          = updatedList.title;
         existingList.description    = updatedList.description;
@@ -54,10 +83,8 @@ public class ToDoListService : IToDoListService
     public async Task<bool> DeleteListAsync(int id)
     {
         var list = await _context.ToDoLists.FindAsync(id);
-        if (list == null)
-        {
-            return false;
-        }
+
+        if (list == null) return false;
 
         _context.ToDoLists.Remove(list);
         await _context.SaveChangesAsync();

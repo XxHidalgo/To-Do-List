@@ -8,7 +8,9 @@ public interface IToDoListService
         string? filterOn = null,
         string? filterQuery = null,
         string? sortBy = null,
-        bool sortDescending = false
+        bool sortDescending = false,
+        int pageNumber = 1,
+        int pageSize = 10
     );
     Task<ToDoListModel?> GetListByIdAsync(int id);
     Task<ToDoListModel> CreateListAsync(ToDoListModel newList);

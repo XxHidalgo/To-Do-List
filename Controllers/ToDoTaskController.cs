@@ -27,10 +27,19 @@ public class ToDoTaskController : ControllerBase
         [FromQuery] string? filterOn = null,
         [FromQuery] string? filterQuery = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = false
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10
     )
     {
-        var tasks = await _toDoTaskService.GetTasksAsync(filterOn, filterQuery, sortBy, sortDescending);
+        var tasks = await _toDoTaskService.GetTasksAsync(
+            filterOn,
+            filterQuery,
+            sortBy,
+            sortDescending,
+            pageNumber,
+            pageSize
+        );
 
         var dto = _mapper.Map<IEnumerable<ToDoTaskDto>>(tasks);
 

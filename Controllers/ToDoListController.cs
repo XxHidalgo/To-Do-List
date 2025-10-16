@@ -28,10 +28,19 @@ public class ToDoListController : ControllerBase
         [FromQuery] string? filterOn = null,
         [FromQuery] string? filterQuery = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = false
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10
     )
     {
-        var domainLists = await _toDoListService.GetListsAsync(filterOn, filterQuery, sortBy, sortDescending);
+        var domainLists = await _toDoListService.GetListsAsync(
+            filterOn,
+            filterQuery,
+            sortBy,
+            sortDescending,
+            pageNumber,
+            pageSize
+        );
 
         var dtoLists = _mapper.Map<IEnumerable<ToDoListDto>>(domainLists);
 

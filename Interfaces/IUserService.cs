@@ -7,7 +7,9 @@ public interface IUserService
         string? filterOn = null,
         string? filterQuery = null,
         string? sortBy = null,
-        bool sortDescending = false
+        bool sortDescending = false,
+        int pageNumber = 1,
+        int pageSize = 10
     );
     Task<User?> GetUserByIdAsync(int id);
     Task<User> CreateUserAsync(User newUser);

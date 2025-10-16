@@ -18,7 +18,9 @@ public class UserService : IUserService
         string? filterOn = null,
         string? filterQuery = null,
         string? sortBy = null,
-        bool sortDescending = false
+        bool sortDescending = false,
+        int pageNumber = 1,
+        int pageSize = 100
     )
     {
         var query = _context.Users.AsQueryable();
@@ -42,8 +44,10 @@ public class UserService : IUserService
                 query = sortDescending ? query.OrderByDescending(u => u.id) : query.OrderBy(u => u.id);
             }
         }
+        
+        var skipResult = (pageNumber - 1) * pageSize;
 
-        return await query.ToListAsync();
+        return await query.Skip(skipResult).Take(pageSize).ToListAsync();
     }
 
     public async Task<User?> GetUserByIdAsync(int id)

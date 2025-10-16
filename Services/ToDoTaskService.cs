@@ -19,7 +19,9 @@ public class ToDoTaskService : IToDoTaskService
         string? filterOn = null,
         string? filterQuery = null,
         string? sortBy = null,
-        bool sortDescending = false
+        bool sortDescending = false,
+        int pageNumber = 1,
+        int pageSize = 100
     )
     {
         var query = _context.ToDoTasks
@@ -49,7 +51,9 @@ public class ToDoTaskService : IToDoTaskService
             }
         }
 
-        return await query.ToListAsync();
+        var skipResult = (pageNumber - 1) * pageSize;
+
+        return await query.Skip(skipResult).Take(pageSize).ToListAsync();
     }
     
     public async Task<ToDoTask?> GetTaskByIdAsync(int id)

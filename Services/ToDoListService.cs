@@ -5,13 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ToDoList.Services;
 
-public class ToDoListService : IToDoListService
+public class ToDoListService : BaseService<ToDoListModel>, IToDoListService
 {
-    private readonly ToDoListContext _context;
-
-    public ToDoListService(ToDoListContext context)
+    public ToDoListService(ToDoListContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<ToDoListModel>> GetListsAsync(
@@ -23,7 +20,7 @@ public class ToDoListService : IToDoListService
         int pageSize = 100
     )
     {
-        var query = _context.ToDoLists
+        var query = Context.ToDoLists
             .Include(l => l.user)
             .Include(l => l.tasks)
             .AsQueryable();
@@ -55,7 +52,7 @@ public class ToDoListService : IToDoListService
 
     public async Task<ToDoListModel?> GetListByIdAsync(int id)
     {
-        return await _context.ToDoLists
+        return await Context.ToDoLists
             .Include(l => l.user)
             .Include(l => l.tasks)
             .AsNoTracking()
@@ -64,34 +61,16 @@ public class ToDoListService : IToDoListService
 
     public async Task<ToDoListModel> CreateListAsync(ToDoListModel newList)
     {
-        _context.ToDoLists.Add(newList);
-        await _context.SaveChangesAsync();
-        return newList;
+        return await CreateAsync(newList);
     }
 
     public async Task<ToDoListModel?> UpdateListAsync(int id, ToDoListModel updatedList)
     {
-        var existingList = await _context.ToDoLists.FindAsync(id);
-
-        if (existingList == null) return null;
-
-        existingList.title          = updatedList.title;
-        existingList.description    = updatedList.description;
-        existingList.isCompleted    = updatedList.isCompleted;
-        existingList.user_id        = updatedList.user_id;
-
-        await _context.SaveChangesAsync();
-        return existingList;
+        return await UpdateAsync(id, updatedList);
     }
 
     public async Task<bool> DeleteListAsync(int id)
     {
-        var list = await _context.ToDoLists.FindAsync(id);
-
-        if (list == null) return false;
-
-        _context.ToDoLists.Remove(list);
-        await _context.SaveChangesAsync();
-        return true;
+        return await DeleteAsync(id);
     }
 }

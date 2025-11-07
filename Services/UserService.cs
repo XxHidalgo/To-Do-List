@@ -1,17 +1,14 @@
-using ToDoList.Interfaces;
-using ToDoList.Database;
-using Microsoft.EntityFrameworkCore;
 using ToDoList.Models.Domain;
+using Microsoft.EntityFrameworkCore;
+using ToDoList.Database;
+using ToDoList.Interfaces;
  
 namespace ToDoList.Services;
  
-public class UserService : IUserService
+public class UserService : BaseService<User>, IUserService
 {
-    private readonly ToDoListContext _context;
- 
-    public UserService(ToDoListContext context)
+    public UserService(ToDoListContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync(
@@ -23,7 +20,7 @@ public class UserService : IUserService
         int pageSize = 100
     )
     {
-        var query = _context.Users.AsQueryable();
+    var query = Context.Users.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
         {
@@ -52,40 +49,23 @@ public class UserService : IUserService
 
     public async Task<User?> GetUserByIdAsync(int id)
     {
-        return await _context.Users
+        return await Context.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.id == id);
     }
     
     public async Task<User> CreateUserAsync(User newUser)
     {
-        _context.Users.Add(newUser);
-        await _context.SaveChangesAsync();
-        return newUser;
+        return await CreateAsync(newUser);
     }
  
     public async Task<User?> UpdateUserAsync(int id, User updatedUser)
     {
-        var existingUser = await _context.Users.FindAsync(id);
-
-        if (existingUser == null) return null;
-
-        existingUser.username   = updatedUser.username;
-        existingUser.email      = updatedUser.email;
-        existingUser.password   = updatedUser.password;
-
-        await _context.SaveChangesAsync();
-        return existingUser;
+        return await UpdateAsync(id, updatedUser);
     }
  
     public async Task<bool> DeleteUserAsync(int id)
     {
-        var user = await _context.Users.FindAsync(id);
-
-        if (user == null) return false;
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-        return true;
+        return await DeleteAsync(id);
     }
 }

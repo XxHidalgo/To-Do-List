@@ -4,11 +4,13 @@ using ToDoList.Models.Domain;
 using ToDoList.Models.DTOs;
 using AutoMapper;
 using ToDoList.CustomActionFilters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoList.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;

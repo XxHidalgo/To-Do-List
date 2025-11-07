@@ -1,18 +1,14 @@
-using ToDoList.Interfaces;
-using ToDoList.Database;
 using Microsoft.EntityFrameworkCore;
+using ToDoList.Database;
+using ToDoList.Interfaces;
 using ToDoList.Models.Domain;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace ToDoList.Services;
 
-public class ToDoTaskService : IToDoTaskService
+public class ToDoTaskService : BaseService<ToDoTask>, IToDoTaskService
 {
-    private readonly ToDoListContext _context;
-
-    public ToDoTaskService(ToDoListContext context)
+    public ToDoTaskService(ToDoListContext context) : base(context)
     {
-        _context = context;
     }
 
     public async Task<IEnumerable<ToDoTask>> GetTasksAsync(
@@ -24,7 +20,7 @@ public class ToDoTaskService : IToDoTaskService
         int pageSize = 100
     )
     {
-        var query = _context.ToDoTasks
+    var query = Context.ToDoTasks
                     .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
@@ -58,42 +54,23 @@ public class ToDoTaskService : IToDoTaskService
     
     public async Task<ToDoTask?> GetTaskByIdAsync(int id)
     {
-        return await _context.ToDoTasks
+        return await Context.ToDoTasks
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.id == id);
     }
 
     public async Task<ToDoTask> CreateTaskAsync(ToDoTask newTask)
     {
-        _context.ToDoTasks.Add(newTask);
-        await _context.SaveChangesAsync();
-        return newTask;
+        return await CreateAsync(newTask);
     }
 
     public async Task<ToDoTask?> UpdateTaskAsync(int id, ToDoTask updatedTask)
     {
-        var existingTask = await _context.ToDoTasks.FindAsync(id);
-
-        if (existingTask == null) return null;
-
-        existingTask.title          = updatedTask.title;
-        existingTask.description    = updatedTask.description;
-        existingTask.isCompleted    = updatedTask.isCompleted;
-        existingTask.dueDate        = updatedTask.dueDate;
-        existingTask.toDoList_id    = updatedTask.toDoList_id;
-
-        await _context.SaveChangesAsync();
-        return existingTask;
+        return await UpdateAsync(id, updatedTask);
     }
 
     public async Task<bool> DeleteTaskAsync(int id)
     {
-        var list = await _context.ToDoTasks.FindAsync(id);
-
-        if (list == null) return false;
-
-        _context.ToDoTasks.Remove(list);
-        await _context.SaveChangesAsync();
-        return true;
+        return await DeleteAsync(id);
     }
 }

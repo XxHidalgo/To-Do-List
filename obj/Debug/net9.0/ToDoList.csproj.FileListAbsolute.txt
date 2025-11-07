@@ -167,3 +167,9 @@ C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\refin
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ToDoList.pdb
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ToDoList.genruntimeconfig.cache
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ref\ToDoList.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Microsoft.Extensions.Identity.Stores.dll

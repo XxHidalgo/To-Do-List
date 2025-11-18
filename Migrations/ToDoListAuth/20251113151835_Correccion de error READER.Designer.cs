@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList.Database;
 
@@ -11,9 +12,11 @@ using ToDoList.Database;
 namespace ToDoList.Migrations.ToDoListAuth
 {
     [DbContext(typeof(ToDoListAuthContext))]
-    partial class ToDoListAuthContextModelSnapshot : ModelSnapshot
+    [Migration("20251113151835_Correccion de error READER")]
+    partial class CorrecciondeerrorREADER
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

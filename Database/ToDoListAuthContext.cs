@@ -18,8 +18,8 @@ public class ToDoListAuthContext : IdentityDbContext
             {
                 Id = "84f67d14-7788-4819-bbde-dd9cd0379c26",
                 ConcurrencyStamp = "84f67d14-7788-4819-bbde-dd9cd0379c26",
-                Name = "Redader",
-                NormalizedName = "Redader".ToUpper()
+                Name = "Reader",
+                NormalizedName = "Reader".ToUpper()
             },
             new IdentityRole
             {

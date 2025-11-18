@@ -12,7 +12,6 @@ public class AutoMapperProfiles : Profile
         //create or update mappings
         CreateMap<ToDoListModel, CreateOrUpdateToDoListDto>().ReverseMap();
         CreateMap<ToDoTask, CreateOrUpdateToDoTaskDto>().ReverseMap();
-        CreateMap<User, CreateOrUpdateUserDto>().ReverseMap();
 
         //read mappings
         CreateMap<ToDoListModel, ToDoListDto>().ReverseMap();

@@ -10,7 +10,6 @@ namespace ToDoList.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
@@ -25,6 +24,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Reader")]
     public async Task<IActionResult> GetUsers(
         [FromQuery] string? filterOn = null,
         [FromQuery] string? filterQuery = null,
@@ -49,6 +49,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Reader")]
     public async Task<IActionResult> GetUser(int id)
     {
         var user = await _userService.GetUserByIdAsync(id);
@@ -62,6 +63,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [ValidateModel]
+    [Authorize(Roles = "Writer")]
     public async Task<IActionResult> CreateUser([FromBody] CreateOrUpdateUserDto newUserDto)
     {
         var domain = _mapper.Map<User>(newUserDto);
@@ -75,6 +77,7 @@ public class UserController : ControllerBase
 
     [HttpPut("{id}")]
     [ValidateModel]
+    [Authorize(Roles = "Writer")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] CreateOrUpdateUserDto updatedUserDto)
     {
         var domain = _mapper.Map<User>(updatedUserDto);
@@ -89,6 +92,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Writer")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         var success = await _userService.DeleteUserAsync(id);

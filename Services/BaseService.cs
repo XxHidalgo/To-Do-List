@@ -37,11 +37,20 @@ public class BaseService<T> : IBaseService<T> where T : class
     {
         var existingEntity = await DbSet.FindAsync(id);
         if (existingEntity == null)
-        {
             return null;
+
+        // Copiar SOLO las propiedades que no sean la clave primaria
+        var entry = Context.Entry(existingEntity);
+
+        foreach (var prop in entry.Properties)
+        {
+            if (!prop.Metadata.IsPrimaryKey())
+            {
+                var newValue = entity.GetType().GetProperty(prop.Metadata.Name)?.GetValue(entity);
+                prop.CurrentValue = newValue;
+            }
         }
 
-        Context.Entry(existingEntity).CurrentValues.SetValues(entity);
         await Context.SaveChangesAsync();
         return existingEntity;
     }

@@ -5,6 +5,7 @@ using ToDoList.Models.DTOs;
 using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 using AutoMapper;
 using ToDoList.CustomActionFilters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoList.Controllers;
 
@@ -24,6 +25,7 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Reader")]
     public async Task<IActionResult> GetList(
         [FromQuery] string? filterOn = null,
         [FromQuery] string? filterQuery = null,
@@ -48,6 +50,7 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Reader")]
     public async Task<IActionResult> GetList(int id)
     {
         var domain = await _toDoListService.GetListByIdAsync(id);
@@ -61,6 +64,7 @@ public class ToDoListController : ControllerBase
 
     [HttpPost]
     [ValidateModel]
+    [Authorize(Roles = "Writer")]
     public async Task<IActionResult> CreateList([FromBody] CreateOrUpdateToDoListDto newListDto)
     {
         var domain = _mapper.Map<ToDoListModel>(newListDto);
@@ -74,6 +78,7 @@ public class ToDoListController : ControllerBase
 
     [HttpPut("{id}")]
     [ValidateModel]
+    [Authorize(Roles = "Writer")]
     public async Task<IActionResult> UpdateList(int id, [FromBody] CreateOrUpdateToDoListDto updatedDto)
     {
         var domain = _mapper.Map<ToDoListModel>(updatedDto);
@@ -88,6 +93,7 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Writer")]
     public async Task<IActionResult> DeleteList(int id)
     {
         var success = await _toDoListService.DeleteListAsync(id);

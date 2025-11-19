@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ToDoList.Interfaces;
 using Microsoft.Extensions.Logging;
 using ToDoList.Models.DTOs;
 
@@ -15,11 +16,13 @@ namespace ToDoList.Controllers
     {
         private readonly ILogger<AuthController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenService _tokenService;
 
-        public AuthController(UserManager<IdentityUser> userManager, ILogger<AuthController> logger)
+        public AuthController(UserManager<IdentityUser> userManager, ILogger<AuthController> logger, ITokenService tokenService)
         {
             _userManager = userManager;
             _logger = logger;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -68,7 +71,19 @@ namespace ToDoList.Controllers
                 
                 if (passwordValid)
                 {
-                    return Ok("Login successful");
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    if(roles != null && roles.Any())
+                    {
+                        var token = _tokenService.CreateJWTToken(user, roles.ToList());
+
+                        var response = new LoginResponseDto
+                        {
+                            JwtToken = token
+                        };
+                        
+                        return Ok(response);
+                    }
                 }
              }
 

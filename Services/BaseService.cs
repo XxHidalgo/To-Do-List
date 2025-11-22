@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Database;
 using ToDoList.Interfaces;
+using ToDoList.Pagination;
 
 namespace ToDoList.Services;
 
@@ -13,8 +14,14 @@ public class BaseService<T> : IBaseService<T> where T : class
     }
 
     protected ToDoListContext Context { get; }
-
     protected DbSet<T> DbSet { get; }
+
+    public virtual async Task<IEnumerable<T>> GetAsync(PaginationParameters paginationParameters)
+    {
+        PaginationFilter<T> pagination = new PaginationFilter<T>(DbSet.AsQueryable(), paginationParameters);
+
+        return await pagination.getDataWithPaginationApplied();
+    }
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ToDoList.Database;
 using ToDoList.Interfaces;
 using ToDoList.Models.Domain;
+using ToDoList.Pagination;
 
 namespace ToDoList.Services;
 
@@ -11,45 +12,9 @@ public class ToDoTaskService : BaseService<ToDoTask>, IToDoTaskService
     {
     }
 
-    public async Task<IEnumerable<ToDoTask>> GetTasksAsync(
-        string? filterOn = null,
-        string? filterQuery = null,
-        string? sortBy = null,
-        bool sortDescending = false,
-        int pageNumber = 1,
-        int pageSize = 100
-    )
+    public async Task<IEnumerable<ToDoTask>> GetTasksAsync(PaginationParameters paginationParameters)
     {
-    var query = Context.ToDoTasks
-                    .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
-        {
-            if (filterOn.Equals("title", StringComparison.OrdinalIgnoreCase))
-            {
-                query = query.Where(l => l.title != null && EF.Functions.Like(l.title, $"%{filterQuery}%"));
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(sortBy))
-        {
-            if (sortBy.Equals("title", StringComparison.OrdinalIgnoreCase))
-            {
-                query = sortDescending ? query.OrderByDescending(l => l.title) : query.OrderBy(l => l.title);
-            }
-            else if (sortBy.Equals("id", StringComparison.OrdinalIgnoreCase))
-            {
-                query = sortDescending ? query.OrderByDescending(l => l.id) : query.OrderBy(l => l.id);
-            }
-            else if (sortBy.Equals("dueDate", StringComparison.OrdinalIgnoreCase))
-            {
-                query = sortDescending ? query.OrderByDescending(l => l.dueDate) : query.OrderBy(l => l.dueDate);
-            }
-        }
-
-        var skipResult = (pageNumber - 1) * pageSize;
-
-        return await query.Skip(skipResult).Take(pageSize).ToListAsync();
+        return await GetAsync(paginationParameters);
     }
     
     public async Task<ToDoTask?> GetTaskByIdAsync(int id)

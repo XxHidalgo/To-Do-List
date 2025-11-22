@@ -2,6 +2,7 @@ using ToDoList.Interfaces;
 using ToDoListModel = ToDoList.Models.Domain.ToDoList;
 using ToDoList.Database;
 using Microsoft.EntityFrameworkCore;
+using ToDoList.Pagination;
 
 namespace ToDoList.Services;
 
@@ -11,45 +12,11 @@ public class ToDoListService : BaseService<ToDoListModel>, IToDoListService
     {
     }
 
-    public async Task<IEnumerable<ToDoListModel>> GetListsAsync(
-        string? filterOn = null,
-        string? filterQuery = null,
-        string? sortBy = null,
-        bool sortDescending = false,
-        int pageNumber = 1,
-        int pageSize = 100
-    )
+    public async Task<IEnumerable<ToDoListModel>> GetListsAsync(PaginationParameters paginationParameters)
     {
-        var query = Context.ToDoLists
-            .Include(l => l.user)
-            .Include(l => l.tasks)
-            .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
-        {
-            if (filterOn.Equals("title", StringComparison.OrdinalIgnoreCase))
-            {
-                query = query.Where(l => l.title != null && EF.Functions.Like(l.title, $"%{filterQuery}%"));
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(sortBy))
-        {
-            if (sortBy.Equals("title", StringComparison.OrdinalIgnoreCase))
-            {
-                query = sortDescending ? query.OrderByDescending(l => l.title) : query.OrderBy(l => l.title);
-            }
-            else if (sortBy.Equals("id", StringComparison.OrdinalIgnoreCase))
-            {
-                query = sortDescending ? query.OrderByDescending(l => l.id) : query.OrderBy(l => l.id);
-            }
-        }
-
-        var skipResult = (pageNumber - 1) * pageSize;
-
-        return await query.Skip(skipResult).Take(pageSize).ToListAsync();
+        return await GetAsync(paginationParameters);
     }
-
+    
     public async Task<ToDoListModel?> GetListByIdAsync(int id)
     {
         return await Context.ToDoLists

@@ -5,6 +5,7 @@ using ToDoList.Models.DTOs;
 using AutoMapper;
 using ToDoList.CustomActionFilters;
 using Microsoft.AspNetCore.Authorization;
+using ToDoList.Pagination;
 
 namespace ToDoList.Controllers;
 
@@ -35,12 +36,15 @@ public class ToDoTaskController : ControllerBase
     )
     {
         var tasks = await _toDoTaskService.GetTasksAsync(
-            filterOn,
-            filterQuery,
-            sortBy,
-            sortDescending,
-            pageNumber,
-            pageSize
+            new PaginationParameters
+            {
+                filterOn = filterOn,
+                filterQuery = filterQuery,
+                sortBy = sortBy,
+                sortDescending = sortDescending,
+                pageNumber = pageNumber,
+                pageSize = pageSize
+            }
         );
 
         var dto = _mapper.Map<IEnumerable<ToDoTaskDto>>(tasks);

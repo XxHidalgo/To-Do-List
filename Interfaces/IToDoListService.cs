@@ -1,17 +1,11 @@
 using ToDoListModel = ToDoList.Models.Domain.ToDoList;
+using ToDoList.Pagination;
 
 namespace ToDoList.Interfaces;
 
 public interface IToDoListService
 {
-    Task<IEnumerable<ToDoListModel>> GetListsAsync(
-        string? filterOn = null,
-        string? filterQuery = null,
-        string? sortBy = null,
-        bool sortDescending = false,
-        int pageNumber = 1,
-        int pageSize = 10
-    );
+    Task<IEnumerable<ToDoListModel>> GetListsAsync(PaginationParameters paginationParameters);
     Task<ToDoListModel?> GetListByIdAsync(int id);
     Task<ToDoListModel> CreateListAsync(ToDoListModel newList);
     Task<ToDoListModel?> UpdateListAsync(int id, ToDoListModel updatedList);

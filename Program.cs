@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 //CORS 
 builder.Services.AddCors(options =>
 {
@@ -24,6 +25,7 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 // Add Microsoft OpenAPI helpers (minimal) and Swashbuckle for Swagger UI
 builder.Services.AddOpenApi();
@@ -76,6 +78,7 @@ builder.Services.AddScoped<IToDoListService, ToDoListService>();
 builder.Services.AddScoped<IToDoTaskService, ToDoTaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 

@@ -9,6 +9,7 @@ namespace ToDoList.Database
         public DbSet<ToDoListModel> ToDoLists { get; set; }
         public DbSet<ToDoTask> ToDoTasks { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Image> Images { get; set; }
         public ToDoListContext(DbContextOptions<ToDoListContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

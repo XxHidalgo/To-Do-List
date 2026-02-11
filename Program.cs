@@ -9,6 +9,7 @@ using ToDoList.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -138,8 +139,13 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
-
 app.UseAuthorization();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath = "/Images"
+});
 
 app.MapControllers();
 

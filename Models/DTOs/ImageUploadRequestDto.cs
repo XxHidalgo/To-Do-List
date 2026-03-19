@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using ToDoList.Enums;
 
 namespace ToDoList.Models.DTOs;
 
@@ -7,6 +8,9 @@ namespace ToDoList.Models.DTOs;
     {
         [Required]
         public IFormFile? file { get; set; }
+        [Required]
+        public int idReference {get; set; }
+        public CategoryImageEnum fileCategory { get; set; }
         [Required]
         public string? fileName { get; set; }
         public string? fileDescription { get; set; }

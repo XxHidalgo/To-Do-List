@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using ToDoList.Pagination;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ToDoList.Models.Domain;
+using ToDoList.Enums;
 
 namespace ToDoList.Controllers
 {
@@ -25,6 +26,35 @@ namespace ToDoList.Controllers
             _imageService = imageService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListsAsync(
+            [FromQuery] int idReference,
+            [FromQuery] CategoryImageEnum fileCategory,
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool sortDescending = false,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10
+        )
+        {
+            var domainLists = await _imageService.GetListsAsync(
+                new PaginationParameters
+                {
+                    sortBy = sortBy,
+                    sortDescending = sortDescending,
+                    pageNumber = pageNumber,
+                    pageSize = pageSize,
+                },
+
+                new Dictionary<string, string>()
+                {
+                    {"fileCategory", fileCategory.ToString()},
+                    {"idReference", idReference.ToString()}
+                }
+            );
+
+            return Ok(domainLists);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Upload([FromForm] ImageUploadRequestDto request)
         {
@@ -35,6 +65,8 @@ namespace ToDoList.Controllers
                 var imageDomainModel = new Image
                 {
                     file = request.file,
+                    idReference = request.idReference,
+                    fileCategory = request.fileCategory,
                     fileExtension = Path.GetExtension(request.file?.FileName),
                     fileSizeInBytes = request.file?.Length ?? 0,
                     fileName = request.fileName,
@@ -61,10 +93,8 @@ namespace ToDoList.Controllers
             if(request.file?.Length > 10485760)
             {
                 ModelState.AddModelError("file", "File size more than 10Mb");
-                
             }
         }
 
-        
     }
 }

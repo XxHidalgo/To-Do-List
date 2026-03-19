@@ -173,3 +173,12 @@ C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\refin
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ToDoList.pdb
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ToDoList.genruntimeconfig.cache
 C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\obj\Debug\net9.0\ref\ToDoList.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.AspNetCore.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Extensions.Hosting.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Extensions.Logging.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Formatting.Compact.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Settings.Configuration.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Sinks.Console.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Sinks.Debug.dll
+C:\Users\Dell Latitude 7470\Documents\Backend_C#\ToDoList\bin\Debug\net9.0\Serilog.Sinks.File.dll

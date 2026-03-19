@@ -1,10 +1,12 @@
 using ToDoList.Database;
 using ToDoList.Interfaces;
 using ToDoList.Models.Domain;
+using ToDoList.Enums;
+using ToDoList.Pagination;
 
 namespace ToDoList.Services;
 
-public class ImageService : IImageService
+public class ImageService : BaseService<Image>, IImageService
 {
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -13,12 +15,18 @@ public class ImageService : IImageService
         IWebHostEnvironment webHostEnvironment, 
         IHttpContextAccessor httpContextAccessor,
         ToDoListContext toDoListContext
-        )
+        ) : base(toDoListContext)
     {
         _webHostEnvironment = webHostEnvironment;
         _httpContextAccessor = httpContextAccessor;
         _toDoListContext = toDoListContext;
     }
+
+    public async Task<IEnumerable<Image>> GetListsAsync(PaginationParameters paginationParameters, Dictionary<string, string>? dynamicWhere)
+    {
+        return await GetAsync(paginationParameters, dynamicWhere);
+    }
+
     public async Task<Image> Upload(Image image)
     {
         var localFilePath = Path.Combine(

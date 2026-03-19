@@ -16,9 +16,9 @@ public class BaseService<T> : IBaseService<T> where T : class
     protected ToDoListContext Context { get; }
     protected DbSet<T> DbSet { get; }
 
-    public virtual async Task<IEnumerable<T>> GetAsync(PaginationParameters paginationParameters)
+    public virtual async Task<IEnumerable<T>> GetAsync(PaginationParameters paginationParameters, Dictionary<string, string>? dynamicWhere = null)
     {
-        PaginationFilter<T> pagination = new PaginationFilter<T>(DbSet.AsQueryable(), paginationParameters);
+        PaginationFilter<T> pagination = new PaginationFilter<T>(DbSet.AsQueryable(), paginationParameters, dynamicWhere);
 
         return await pagination.getDataWithPaginationApplied();
     }

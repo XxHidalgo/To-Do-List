@@ -7,6 +7,7 @@ using AutoMapper;
 using ToDoList.CustomActionFilters;
 using Microsoft.AspNetCore.Authorization;
 using ToDoList.Pagination;
+using System.Text.Json;
 
 namespace ToDoList.Controllers;
 
@@ -26,7 +27,7 @@ public class ToDoListController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Reader")]
+    // [Authorize(Roles = "Reader")]
     public async Task<IActionResult> GetList(
         [FromQuery] string? filterOn = null,
         [FromQuery] string? filterQuery = null,
@@ -36,6 +37,8 @@ public class ToDoListController : ControllerBase
         [FromQuery] int pageSize = 10
     )
     {
+        _logger.LogInformation("GetList Action Method was invoked");
+
         var domainLists = await _toDoListService.GetListsAsync(
             new PaginationParameters
             {
@@ -49,6 +52,8 @@ public class ToDoListController : ControllerBase
         );
 
         var dtoLists = _mapper.Map<IEnumerable<ToDoListDto>>(domainLists);
+
+        _logger.LogInformation($"Finished GetList with data: {JsonSerializer.Serialize(dtoLists)}");
 
         return Ok(dtoLists);
     }

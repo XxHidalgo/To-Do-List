@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "J3lv0PouyWY=",
+  "dgSpecHash": "i6qZUsdnmIM=",
   "success": true,
   "projectFilePath": "C:\\Users\\Dell Latitude 7470\\Documents\\Backend_C#\\ToDoList\\ToDoList.csproj",
   "expectedPackageFiles": [
@@ -67,7 +67,7 @@
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\serilog.settings.configuration\\9.0.0\\serilog.settings.configuration.9.0.0.nupkg.sha512",
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\serilog.sinks.console\\6.1.0\\serilog.sinks.console.6.1.0.nupkg.sha512",
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\serilog.sinks.debug\\3.0.0\\serilog.sinks.debug.3.0.0.nupkg.sha512",
-    "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\serilog.sinks.file\\6.0.0\\serilog.sinks.file.6.0.0.nupkg.sha512",
+    "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\serilog.sinks.file\\8.0.0-dev-02331\\serilog.sinks.file.8.0.0-dev-02331.nupkg.sha512",
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
@@ -105,5 +105,18 @@
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\Dell Latitude 7470\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'AutoMapper' 14.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-rvv3-g6hj-g44x",
+      "projectPath": "C:\\Users\\Dell Latitude 7470\\Documents\\Backend_C#\\ToDoList\\ToDoList.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Dell Latitude 7470\\Documents\\Backend_C#\\ToDoList\\ToDoList.csproj",
+      "libraryId": "AutoMapper",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }
